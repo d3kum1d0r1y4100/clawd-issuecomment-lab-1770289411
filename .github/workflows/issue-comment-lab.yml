@@ -1,0 +1,26 @@
+name: issue-comment-lab
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  run:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/lab-run')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+      - name: Execute untrusted code (simulated)
+        run: |
+          echo "Triggered by: $GITHUB_ACTOR"
+          echo "Comment: ${{ github.event.comment.body }}"
+          echo "PWD: $(pwd)"
+          echo "Listing repo:"
+          ls -la
